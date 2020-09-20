@@ -3,66 +3,57 @@
 #include <stdio.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+#include "connect.h"
 
 
-#ifndef ADDRESS
-#define ADDRESS "127.0.0.1"
-#endif
+#define ADDRESS "192.168.15.6"
+#define PORT 5001
 
+int socketfd;
+char connected = 0;
 
-#ifndef PORT
-#define PORT 8000
-#endif
+char serv_msg[6];
 
-int main()
-{
-	int                ret = 0;
-	int                conn_fd;
-	struct sockaddr_in server_addr = { 0 };
+int init_conn(void){
 
-	server_addr.sin_family = AF_INET;
+	char serv_msg[50];
+	memset(&serv_msg, 0, sizeof(serv_msg));
 
-	server_addr.sin_port = htons(PORT);
+	struct sockaddr_in servaddr, cli;
 
+	socketfd = socket(AF_INET, SOCK_STREAM, 0);
+	printf("Socket: %d\n", socketfd);
 
-	ret = inet_pton(AF_INET, ADDRESS, &server_addr.sin_addr);
-	if (ret != 1) {
-		if (ret == -1) {
-			perror("inet_pton");
-		}
-		fprintf(stderr,
-		        "failed to convert address %s "
-		        "to binary net address\n",
-		        ADDRESS);
-		return -1;
-	}
+	//IP e PORT
+	servaddr.sin_family = AF_INET;
+	servaddr.sin_addr.s_addr = inet_addr(ADDRESS);
+	servaddr.sin_port = htons(PORT);
 
-	fprintf(stdout, "CONNECTING: address=%s port=%d\n", ADDRESS, PORT);
+	if (connect(socketfd, (struct sockaddr*) &servaddr, sizeof(servaddr))==0)
+		connected = 1;
+	else
+		printf("Não conectou\n");
 
-	conn_fd = socket(AF_INET, SOCK_STREAM, 0);
-	if (conn_fd == -1) {
-		perror("socket");
-		return -1;
-	}
+	printf("%zu\n", recv(socketfd, serv_msg, 50, 0));
+	
+	//recv(socketfd, serv_msg, 10, 0);
 
-	ret =
-	  connect(conn_fd, (struct sockaddr*)&server_addr, sizeof(server_addr));
-	if (ret == -1) {
-		perror("connect");
-		return -1;
-	}
-
-	ret = shutdown(conn_fd, SHUT_RDWR);
-	if (ret == -1) {
-		perror("shutdown");
-		return -1;
-	}
-
-	ret = close(conn_fd);
-	if (ret == -1) {
-		perror("close");
-		return -1;
-	}
+	printf("%s\n", serv_msg);
 
 	return 0;
+}
+
+void listening(struct ball *ball, char *msg){
+
+	send(socketfd, msg, 1, 0);
+	recv(socketfd, serv_msg, 3, 0);
+
+	printf("msg: %d\n", atoi(serv_msg));
+	ball->bball.x = atoi(serv_msg);
+	
+
 }
