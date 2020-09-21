@@ -13,14 +13,14 @@
 #define ADDRESS "192.168.15.6"
 #define PORT 5001
 
-int socketfd;
-char connected = 0;
+char serv_msg[60];
+static int socketfd;
 
-char serv_msg[6];
 
 int init_conn(void){
 
-	char serv_msg[50];
+	connected = 0;
+
 	memset(&serv_msg, 0, sizeof(serv_msg));
 
 	struct sockaddr_in servaddr, cli;
@@ -38,22 +38,29 @@ int init_conn(void){
 	else
 		printf("Não conectou\n");
 
-	printf("%zu\n", recv(socketfd, serv_msg, 50, 0));
+	printf("%zu\n", recv(socketfd, serv_msg, sizeof(serv_msg), 0));
 	
-	//recv(socketfd, serv_msg, 10, 0);
 
 	printf("%s\n", serv_msg);
 
 	return 0;
 }
 
-void listening(struct ball *ball, char *msg){
-
-	send(socketfd, msg, 1, 0);
+int get_ball_poss(void){
 	recv(socketfd, serv_msg, 3, 0);
-
 	printf("msg: %d\n", atoi(serv_msg));
-	ball->bball.x = atoi(serv_msg);
+	return atoi(serv_msg);
 	
+}
+
+void listening(void){
+	recv(socketfd, serv_msg, sizeof(serv_msg), 0);
+	printf("%s", serv_msg);
+	//send(socketfd, "0", 1, 0);
+}
+
+void hero_action(char *msg){
+	send(socketfd, msg, sizeof(msg), 0);
 
 }
+

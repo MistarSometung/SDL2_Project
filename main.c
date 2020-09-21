@@ -14,6 +14,7 @@
 
 bool run = true;
 bool new_player = false;
+
 bool ball = false;
 char ball_posx = 0;
 
@@ -21,7 +22,9 @@ char ball_posx = 0;
 char *val;
 
 int command = 0;
-char strgo[12];
+
+// O command em forma de string
+char str_command[12];
 
 
 int main(int argc, char *argv[]){
@@ -32,8 +35,9 @@ int main(int argc, char *argv[]){
 
     //Initializations 
     SDL_Init(SDL_INIT_VIDEO);
-    init(&game);
-    init_hero(&hero[0]);
+    init(&game);    
+    init_hero(&hero[0], false);
+    init_hero(&hero[1], true);
 
     init_ball(&b);
 
@@ -43,28 +47,26 @@ int main(int argc, char *argv[]){
 
         render(&game);
         hero_rend(&hero[0], game.rend);
-
+        hero_rend(&hero[1], game.rend);
+        ball_render(&b, game.rend);
 
         //Input
         hero_input(&hero[0]);
-        
+        rebater(&hero[0], &b);
+                
         //Server
         if (connected == 1){
-            //printf("Conectado mesmo");
-            sprintf(strgo, "%d", command);
-            listening(&b, strgo);
-            
-            ball_behavior(&b);
-            printf("Direção: %d\n", b.direction);
-            printf("b->bball.x: %d\n", b.bball.x);
-            printf("Comando: %d\n", command);
-            
+            sprintf(str_command, "%d", command);
+            ball_behavior_online(&b);
+            send_hero_info(&hero[0]);
         }
+        else
+            ball_behavior(&b);
+            
 
-        ball_render(&b, game.rend);
+        
 
         //Present
-        //SDL_RenderPresent(game.rend);
         SDL_RenderPresent(game.rend);
 
         //Delay

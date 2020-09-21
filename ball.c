@@ -1,5 +1,6 @@
 #include <SDL2/SDL.h>
 #include "ball.h"
+#include "connect.h"
 
 
 
@@ -15,23 +16,25 @@ void init_ball(struct ball *ball){
     
 }
 
+void ball_behavior_online(struct ball *ball){
+
+    ball->bball.x = get_ball_poss();
+
+}
+
 void ball_behavior(struct ball *ball){
 
-    //printf("Visto do behavior: %d\n", ball->bball.x);
-
-    if (ball->direction == 0 && ball->bball.x < 690)
-        command = ball->direction;
-    
+    if (ball->direction == 0 && ball->bball.x < 690){
+        //command = ball->direction;
+        ball->bball.x += ball->vel.x;
+    }
     else
         ball->direction = 1;
-        command = ball->direction;
-        
 
     if (ball->direction == 1 && ball->bball.x > 0)
-        command = ball->direction;
+        ball->bball.x -= ball->vel.x;
     else
         ball->direction = 0;
-        command = ball->direction;
 
 
 }

@@ -1,21 +1,32 @@
 #include <SDL2/SDL.h>
 #include <stdbool.h>
+#include <stdio.h>
+#include <string.h>
 
 #include "hero.h"
 #include "screen.h"
 #include "text.h"
 #include "ball.h"
+#include "connect.h"
 
 struct txt_ttf hero_txt;
 
-int posx;
-int posy;
 
-void init_hero(struct hero *hero){
-    
+void init_hero(struct hero *hero, bool eny){
+
+    hero->enemy = eny;
+    hero->name = "Master";
+
     hero->bbox.h = 100;
     hero->bbox.w = 10;
-    hero->bbox.x = 50;
+
+    if (hero->enemy == false)
+        hero->bbox.x = 50;
+    else{
+        hero->bbox.x = 650;
+        printf("Enemy\n");
+    }
+
     hero->bbox.y = 0;
 
     hero->vel.x = 10;
@@ -28,12 +39,30 @@ void init_hero(struct hero *hero){
 
 void rebater(struct hero *hero, struct ball *ball){
     if (SDL_HasIntersection(&hero->bbox, &ball->bball)){
-        if (ball->direction == 0)
-            ball->direction = 1;
-        else
-            ball->direction = 0;
+        if (connected == 0)
+            if (ball->direction == 0)
+                ball->direction = 1;
+            else
+                ball->direction = 0;
+
+        
+
     }
         
+}
+
+void send_hero_info(struct hero *hero){
+    char x[20];
+    char y[20];
+
+
+    sprintf(x, "%03d", hero->bbox.x);
+    sprintf(y, "%03d", hero->bbox.y);
+
+    strcat(x,y);
+
+    hero_action(x);
+
 }
 
 void ponto(struct hero *hero, struct ball *ball){
@@ -53,6 +82,8 @@ void hero_rend(struct hero *hero, SDL_Renderer *rend){
     SDL_RenderFillRect(rend, &hero->bbox);
 
 }
+
+
 
 void hero_input(struct hero *hero){
 
