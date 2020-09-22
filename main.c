@@ -58,7 +58,7 @@ int main(int argc, char *argv[]){
         if (connected == 1){
             sprintf(str_command, "%d", command);
             ball_behavior_online(&b);
-            send_hero_info(&hero[0]);
+            //send_hero_info(&hero[0]);
         }
         else
             ball_behavior(&b);
