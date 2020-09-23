@@ -5,11 +5,14 @@
 
 #include "hero.h"
 #include "screen.h"
-#include "text.h"
+//#include "text.h"
 #include "connect.h"
 #include "ball.h"
 
 #include "placar.h"
+
+//#include <gtk/gtk.h>
+
 
 
 bool run = true;
@@ -27,14 +30,20 @@ int command = 0;
 char str_command[12];
 
 
+
+
+
 int main(int argc, char *argv[]){
 
     struct game game;
     struct ball b;
     struct hero hero[2];
 
+    int error;
+
     //Initializations 
     SDL_Init(SDL_INIT_VIDEO);
+
     init(&game);    
     init_hero(&hero[0], false);
     init_hero(&hero[1], true);

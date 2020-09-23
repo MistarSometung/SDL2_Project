@@ -8,16 +8,44 @@
 #include <stdlib.h>
 
 #include "connect.h"
+#include <confuse.h>
 
-
-#define ADDRESS "192.168.15.6"
-#define PORT 5001
+char *ADDRESS;
+int PORT;
 
 char serv_msg[60];
 static int socketfd;
 
 
+void config(void){
+	
+	cfg_t *cfg;
+
+	cfg_opt_t opts[] = {
+		CFG_SIMPLE_STR ("ip", &ADDRESS),
+		CFG_SIMPLE_INT ("port", &PORT),
+		CFG_END()
+
+	};
+
+	cfg = cfg_init(opts, 0);
+	cfg_parse(cfg, "CONFIG.conf");
+
+	printf("IP: %s\n", ADDRESS);
+	printf("PORT: %d\n", PORT);
+
+	cfg_free(cfg);
+
+}
+
+
+
+
+
+
 int init_conn(void){
+
+	config();
 
 	connected = 0;
 

@@ -5,11 +5,8 @@
 
 #include "hero.h"
 #include "screen.h"
-#include "text.h"
 #include "ball.h"
 #include "connect.h"
-
-struct txt_ttf hero_txt;
 
 
 void init_hero(struct hero *hero, bool eny){
@@ -77,7 +74,6 @@ void ponto(struct hero *hero, struct ball *ball){
 
 void hero_rend(struct hero *hero, SDL_Renderer *rend){
 
-    text_rend(rend, hero_txt.texture, &hero_txt.txtrect);
     SDL_SetRenderDrawColor(rend, 127, 0, 127, 255);
     SDL_RenderFillRect(rend, &hero->bbox);
 
